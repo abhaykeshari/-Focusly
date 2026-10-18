@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Focusly</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+      try {
+        const saved = JSON.parse(localStorage.getItem('taskflow.v1') || 'null');
+        document.documentElement.dataset.theme = (saved && saved.theme) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      } catch (error) {
+        document.documentElement.dataset.theme = 'light';
+      }
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <div class="app">
+      <aside class="side" id="side" aria-label="Sidebar">
+        <div class="brand">
+          <span class="logo" aria-hidden="true">F</span>
+          <span>Focusly</span>
+        </div>
+
+        <button class="add-btn" data-open-form>+ Add task</button>
+
+        <nav aria-label="Views">
+          <p class="grp">Views</p>
+          <ul id="nav"></ul>
+
+          <p class="grp">Categories</p>
+          <ul id="catList"></ul>
+
+          <form id="catForm" class="cat-add" autocomplete="off">
+            <label class="sr" for="catName">New category name</label>
+            <input id="catName" maxlength="24" placeholder="New category">
+            <button type="submit">Add</button>
+          </form>
+        </nav>
+
+        <button class="theme" id="themeBtn">Switch theme</button>
+      </aside>
+
+      <div class="scrim" id="scrim"></div>
+
+      <main class="main">
+        <header class="top">
+          <div>
+            <button class="menu" id="menuBtn" aria-controls="side" aria-expanded="false">Menu</button>
+            <p class="date" id="date"></p>
+            <h1 id="greet"></h1>
+            <p class="sub" id="sub"></p>
+          </div>
+
+          <div class="top-actions">
+            <label class="search">
+              <span class="sr">Search tasks</span>
+              <input id="q" type="search" placeholder="Search title, notes, tags">
+            </label>
+            <button class="primary" data-open-form>New task</button>
+          </div>
+        </header>
+
+        <section id="dash" aria-label="Overview"></section>
+
+        <div class="toolbar">
+          <h2 id="listTitle"></h2>
+
+          <div class="tools">
+            <label>
+              Priority
+              <select id="prio">
+                <option value="all">All</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </label>
+
+            <label>
+              Sort
+              <select id="sort">
+                <option value="created-desc">Newest first</option>
+                <option value="created-asc">Oldest first</option>
+                <option value="due-asc">Due: earliest first</option>
+                <option value="due-desc">Due: latest first</option>
+                <option value="prio">Priority: highest first</option>
+                <option value="alpha">Alphabetical</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <ul id="list" class="list" aria-live="polite"></ul>
+        <div id="empty" class="empty" hidden></div>
+      </main>
+    </div>
+
+    <dialog id="form" aria-labelledby="formTitle">
+      <form id="taskForm" class="dlg" novalidate>
+        <h2 id="formTitle">New task</h2>
+
+        <label class="field">
+          Title
+          <input id="f-title" maxlength="120" autocomplete="off">
+        </label>
+        <span class="err" id="f-title-err"></span>
+
+        <label class="field">
+          Description
+          <textarea id="f-desc" rows="3" maxlength="500"></textarea>
+        </label>
+
+        <div class="row">
+          <label class="field">
+            Category
+            <select id="f-cat"></select>
+          </label>
+
+          <label class="field">
+            Priority
+            <select id="f-prio">
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="row">
+          <label class="field">
+            Due date
+            <input id="f-date" type="date">
+          </label>
+
+          <label class="field">
+            Due time
+            <input id="f-time" type="time">
+          </label>
+        </div>
+        <span class="err" id="f-time-err"></span>
+
+        <label class="field">
+          Tags
+          <input id="f-tags" placeholder="Comma separated, e.g. Java, Practice">
+        </label>
+
+        <label class="check-row">
+          <input type="checkbox" id="f-star">
+          Mark as important
+        </label>
+
+        <div class="dlg-actions">
+          <button type="button" class="ghost" data-close>Cancel</button>
+          <button class="primary">Save task</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="confirm" aria-labelledby="cTitle">
+      <div class="dlg">
+        <h2 id="cTitle">Are you sure?</h2>
+        <p class="sub" id="cMsg"></p>
+
+        <div class="dlg-actions">
+          <button class="ghost" data-close>Cancel</button>
+          <button id="cOk" class="primary danger">Confirm</button>
+        </div>
+      </div>
+    </dialog>
+
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
